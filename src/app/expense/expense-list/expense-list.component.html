@@ -40,14 +40,14 @@
     </ion-row>
   </ion-grid>
 
-  <ion-fab solt="fixed" vertical="bottom" horizontal="end">
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button>
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
   <ion-list>
-    <ion-item>
+    <ion-item button="-" disabled="true" (click)="openModal()">
       <ion-label>Auswärts Essen</ion-label>
     </ion-item>
   </ion-list>
