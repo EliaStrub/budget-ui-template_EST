@@ -1,50 +1,26 @@
-<!-- ------ -->
-<!-- Header -->
-<!-- ------ -->
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
     <ion-title>Categories</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<!-- ------- -->
-<!-- Content -->
-<!-- ------- -->
 <ion-content>
-  <ion-list>
-
-    <ion-item button [detail]="true" (click)="openModal()">
-      <ion-label>
-        Consumer Goods
-      </ion-label>
-    </ion-item>
-
-    <ion-item button [detail]="true" (click)="openModal()">
-      <ion-label>
-        Health Insurance
-      </ion-label>
-    </ion-item>
-
-    <ion-item button [detail]="true" (click)="openModal()">
-      <ion-label>
-        Housing Costs
-      </ion-label>
-    </ion-item>
-
-    <ion-item button [detail]="true" (click)="openModal()">
-      <ion-label>
-        Public Transport
-      </ion-label>
-    </ion-item>
-
-  </ion-list>
-
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="openModal()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+  <ion-grid class="ion-padding">
+    <ion-row>
+      <ion-col>
+      <ion-list>
+        <ion-item>
+          <ion-icon name="swap-vertical-outline"></ion-icon>
+          <ion-select placeholder="Created at (newest first)">
+            <ion-select-option value="Created at (newest first)">Created at (newest first)</ion-select-option>
+            <ion-select-option value="Created at (oldest first)">Created at (oldest first)</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+      </ion-col>
+      <ion-col>
+        <ion-searchbar></ion-searchbar>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
