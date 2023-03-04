@@ -1,26 +1,39 @@
+<!-- ------ -->
+<!-- Header -->
+<!-- ------ -->
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-icon name="close-outline" slot="start"></ion-icon>
-      <ion-button color="medium" (click)="cancel()">Cancel</ion-button>
+      <ion-button color="medium" (click)="cancel()">
+        <ion-icon slot="start" name="close"></ion-icon>
+        Cancel
+      </ion-button>
     </ion-buttons>
-    <ion-title>Edit category</ion-title>
+
+    <ion-title>Add category</ion-title>
+
     <ion-buttons slot="end">
-      <ion-icon name="save" slot="start"></ion-icon>
-      <ion-button (click)="cancel()">Save</ion-button>
+      <ion-button (click)="save()">
+        <ion-icon slot="start" name="save"></ion-icon>
+        Save
+      </ion-button>
     </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
+
+<!-- ------- -->
+<!-- Content -->
+<!-- ------- -->
 <ion-content class="ion-padding">
   <ion-item>
-    <ion-icon name="text-outline" slot="start"></ion-icon>
-    <ion-input placeholder="Your name"></ion-input>
+    <ion-icon name="text" slot="start"></ion-icon>
+    <ion-input maxlength="40" placeholder="Enter the category's name" required></ion-input>
   </ion-item>
 
-<ion-fab slot="fixed" vertical="bottom" horizontal="end">
-  <ion-fab-button color="danger" (click)="presentActionSheet() >Open<">
-    <ion-icon name=trash-outline></ion-icon>
-  </ion-fab-button>
-  <code *ngIf="result"> {{ result }} </code>
-</ion-fab>
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="delete()" color="danger">
+      <ion-icon name="trash"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
