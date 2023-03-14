@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { from, mergeMap } from 'rxjs';
 import { CategoryModalComponent } from '../category-modal/category-modal.component';
 import { ModalController } from '@ionic/angular';
+import { Category } from '../../shared/domain';
 
 @Component({
   selector: 'app-category-list',
@@ -12,21 +13,13 @@ export class CategoryListComponent implements OnInit {
 
   ngOnInit() {}
 
-  openModal() {
-    from(
-      this.modalCtrl.create({
-        component: CategoryModalComponent,
-        componentProps: {
-          isCreate: false,
-        },
-      })
-    )
-      .pipe(
-        mergeMap((modal) => {
-          modal.present();
-          return from(modal.onWillDismiss());
-        })
-      )
-      .subscribe((event) => console.log(event));
+  async openModal(category?: Category): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: CategoryModalComponent,
+      componentProps: { category: category ? { ...category } : {} },
+    });
+    modal.present();
+    const { role } = await modal.onWillDismiss();
+    //if (role === 'refresh') this.reloadCategories();
   }
 }
