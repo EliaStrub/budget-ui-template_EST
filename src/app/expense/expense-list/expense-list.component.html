@@ -3,39 +3,31 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Expense</ion-title>
+    <ion-title>Categories</ion-title>
+    <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-grid class="ion-padding">
+
+  <!-- Search & sort -->
+  <ion-grid class="ion-padding" [formGroup]="searchForm">
     <ion-row>
-      <ion-col>
-        <ion-list>
-          <ion-item>
-            <ion-icon name="swap-vertical-outline" slot="start"></ion-icon>
-            <ion-select placeholder="Name (A-Z)" interface="popover">
-              <ion-select-option value="Created at (newest first)">Created at (newest first)</ion-select-option>
-              <ion-select-option value="Created at (oldest first)">Created at (oldest first)</ion-select-option>
-            </ion-select>
-          </ion-item>
-        </ion-list>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-icon name="swap-vertical" slot="start"></ion-icon>
+          <ion-select interface="popover" formControlName="sort">
+            <ion-select-option *ngFor="let sortOption of sortOptions" [value]="sortOption.value">
+              {{sortOption.label}}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
       </ion-col>
-      <ion-col>
-        <ion-list>
-          <ion-item>
-            <ion-icon name="pricetag-outline" slot="start"></ion-icon>
-            <ion-select placeholder="Category"></ion-select>
-          </ion-item>
-        </ion-list>
-      </ion-col>
-      <ion-col>
-        <ion-list>
-          <ion-item>
-            <ion-icon name="search" slot="start"></ion-icon>
-            <ion-label>Search</ion-label>
-          </ion-item>
-        </ion-list>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-icon name="search" slot="start"></ion-icon>
+          <ion-input maxlength="40" placeholder="Search" [clearInput]="true" formControlName="name"></ion-input>
+        </ion-item>
       </ion-col>
     </ion-row>
   </ion-grid>
@@ -46,9 +38,52 @@
     </ion-fab-button>
   </ion-fab>
 
-  <ion-list>
-    <ion-item button="-" disabled="true" (click)="openModal()">
-      <ion-label>Auswärts Essen</ion-label>
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="openModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- Category list -->
+  <ion-list [ngSwitch]="categories?.length" inset="true">
+
+    <!-- Skeleton -->
+    <ng-container *ngSwitchCase="null">
+      <ion-item *ngFor="let i of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]">
+        <ion-label>
+          <ion-skeleton-text [animated]="true" style="width: 80px"></ion-skeleton-text>
+        </ion-label>
+      </ion-item>
+    </ng-container>
+
+    <!-- Empty list -->
+    <ion-item *ngSwitchCase="0">
+      <ion-icon slot="start" name="alert-circle-outline"></ion-icon>
+      <ion-label>
+        No categories found
+      </ion-label>
     </ion-item>
+
+    <!-- Categories -->
+    <ng-container *ngSwitchDefault>
+      <ion-item button="true" *ngFor="let category of categories" [detail]="true" [disabled]="loading"
+                (click)="openModal(category)">
+        <ion-label>
+          {{category.name}}
+        </ion-label>
+      </ion-item>
+    </ng-container>
+
   </ion-list>
+
+  <!-- Infinite scroll -->
+  <ion-infinite-scroll [disabled]="lastPageReached || loading" (ionInfinite)="loadNextCategoryPage($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="reloadCategories($event)" [disabled]="loading">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
 </ion-content>

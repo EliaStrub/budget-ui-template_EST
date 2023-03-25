@@ -1,32 +1,92 @@
-import { Component } from '@angular/core';
-import { addMonths, set } from 'date-fns';
-import { BehaviorSubject, from, mergeMap } from 'rxjs';
-import { ModalController } from '@ionic/angular';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {debounce, from, interval, mergeMap, Subject, takeUntil} from 'rxjs';
 import { ExpenseModalComponent } from '../expense-modal/expense-modal.component';
+import {InfiniteScrollCustomEvent, ModalController, RefresherCustomEvent} from '@ionic/angular';
+import {Category, CategoryCriteria, SortOption} from '../../shared/domain';
+import {ExpenseService} from "../expense.service";
+import { ToastService } from '../../shared/service/toast.service';
+import {FormBuilder, FormGroup} from "@angular/forms";
+import {CategoryService} from "../../category/category.service";
 
 @Component({
-  selector: 'app-expense-overview',
+  selector: 'app-expense-list',
   templateUrl: './expense-list.component.html',
 })
-export class ExpenseListComponent {
-  date = new BehaviorSubject<Date>(set(new Date(), { date: 1 }));
+export class ExpenseListComponent implements OnInit, OnDestroy {
+  categories: Category[] | null = null;
+  readonly initialSort = 'name,asc';
+  lastPageReached = false;
+  loading = false;
+  searchCriteria: CategoryCriteria = { page: 0, size: 25, sort: this.initialSort };
+  readonly searchForm: FormGroup;
+  readonly sortOptions: SortOption[] = [
+    { label: 'Created at (newest first)', value: 'createdAt,desc' },
+    { label: 'Created at (oldest first)', value: 'createdAt,asc' },
+    { label: 'Name (A-Z)', value: 'name,asc' },
+    { label: 'Name (Z-A)', value: 'name,desc' },
+  ];
+  private readonly unsubscribe = new Subject<void>();
 
-  constructor(private readonly modalCtrl: ModalController) {}
-
-  addMonths = (number: number): void => this.date.next(addMonths(this.date.value, number));
-
-  openModal(): void {
-    from(
-      this.modalCtrl.create({
-        component: ExpenseModalComponent,
-      })
-    )
+  constructor(
+    private readonly modalCtrl: ModalController,
+    private readonly categoryService: CategoryService,
+    private readonly toastService: ToastService,
+    private readonly formBuilder: FormBuilder
+  ) {this.searchForm = this.formBuilder.group({ name: [], sort: [this.initialSort] });
+    this.searchForm.valueChanges
       .pipe(
-        mergeMap((modal) => {
-          modal.present();
-          return from(modal.onWillDismiss());
-        })
+        takeUntil(this.unsubscribe),
+        debounce((value) => (value.name?.length ? interval(400) : interval(0)))
       )
-      .subscribe((event) => console.log(event));
+      .subscribe((value) => {
+        this.searchCriteria = { ...this.searchCriteria, ...value, page: 0 };
+        this.loadCategories();
+      });
   }
+
+  private loadCategories(next: () => void = () => {}): void {
+    if (!this.searchCriteria.name) delete this.searchCriteria.name;
+    this.loading = true;
+    this.categoryService.getCategories(this.searchCriteria).subscribe({
+      next: (categories) => {
+        if (this.searchCriteria.page === 0 || !this.categories) this.categories = [];
+        this.categories.push(...categories.content);
+        this.lastPageReached = categories.last;
+        next();
+        this.loading = false;
+      },
+      error: (error) => {
+        this.toastService.displayErrorToast('Could not load categories', error);
+        this.loading = false;
+      },
+    });
+  }
+  ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
+  async openModal(category?: Category): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: ExpenseModalComponent,
+      componentProps: { category: category ? { ...category } : {} },
+    });
+    modal.present();
+    const { role } = await modal.onWillDismiss();
+    if (role === 'refresh') this.reloadCategories();
+  }
+  loadNextCategoryPage($event: any) {
+    this.searchCriteria.page++;
+    this.loadCategories(() => ($event as InfiniteScrollCustomEvent).target.complete());
+  }
+
+  reloadCategories($event?: any): void {
+    this.searchCriteria.page = 0;
+    this.loadCategories(() => ($event ? ($event as RefresherCustomEvent).target.complete() : {}));
+  }
+
 }
