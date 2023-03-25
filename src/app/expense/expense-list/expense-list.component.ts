@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {debounce, from, interval, mergeMap, Subject, takeUntil} from 'rxjs';
+import {BehaviorSubject, debounce, from, interval, mergeMap, Subject, takeUntil} from 'rxjs';
 import { ExpenseModalComponent } from '../expense-modal/expense-modal.component';
 import {InfiniteScrollCustomEvent, ModalController, RefresherCustomEvent} from '@ionic/angular';
 import {Category, CategoryCriteria, SortOption} from '../../shared/domain';
@@ -7,12 +7,14 @@ import {ExpenseService} from "../expense.service";
 import { ToastService } from '../../shared/service/toast.service';
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {CategoryService} from "../../category/category.service";
+import{addMonths,set}from'date-fns';
 
 @Component({
   selector: 'app-expense-list',
   templateUrl: './expense-list.component.html',
 })
 export class ExpenseListComponent implements OnInit, OnDestroy {
+  date=new BehaviorSubject<Date>(set(new Date(),{date:1}));
   categories: Category[] | null = null;
   readonly initialSort = 'name,asc';
   lastPageReached = false;
@@ -43,6 +45,8 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
         this.loadCategories();
       });
   }
+
+  addMonths=(number:number):void=>this.date.next(addMonths(this.date.value,number));
 
   private loadCategories(next: () => void = () => {}): void {
     if (!this.searchCriteria.name) delete this.searchCriteria.name;
