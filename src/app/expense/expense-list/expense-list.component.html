@@ -1,16 +1,16 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Categories</ion-title>
+    <ion-title>Expenses</ion-title>
     <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
-  <!-- Search & sort -->
+  <!-- Search & Filter & Sort -->
   <ion-grid class="ion-padding" [formGroup]="searchForm">
     <ion-row>
-      <ion-col size="12" size-sm="6">
+      <ion-col size="8" size-sm="4">
         <ion-item>
           <ion-icon name="swap-vertical" slot="start"></ion-icon>
           <ion-select interface="popover" formControlName="sort">
@@ -20,7 +20,17 @@
           </ion-select>
         </ion-item>
       </ion-col>
-      <ion-col size="12" size-sm="6">
+      <ion-col size="8" size-sm="4">
+        <ion-item>
+          <ion-icon name="pricetag" slot="start"></ion-icon>
+          <ion-select multiple="true" placeholder="Category" interface="popover" formControlName="sort">
+            <ion-select-option *ngFor="let FilterOption of FilterOptions" >
+              {{FilterOption.label}}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+      <ion-col size="8" size-sm="4">
         <ion-item>
           <ion-icon name="search" slot="start"></ion-icon>
           <ion-input maxlength="40" placeholder="Search" [clearInput]="true" formControlName="name"></ion-input>

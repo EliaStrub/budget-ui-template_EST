@@ -44,6 +44,11 @@ export interface SortOption {
   value: string;
 }
 
+export interface FilterOption {
+  label: string;
+  value: string;
+}
+
 // --------
 // Category
 // --------

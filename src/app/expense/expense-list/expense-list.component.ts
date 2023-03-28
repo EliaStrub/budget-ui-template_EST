@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, debounce, from, interval, mergeMap, Subject, takeUntil} from 'rxjs';
 import { ExpenseModalComponent } from '../expense-modal/expense-modal.component';
 import {InfiniteScrollCustomEvent, ModalController, RefresherCustomEvent} from '@ionic/angular';
-import {Category, CategoryCriteria, SortOption} from '../../shared/domain';
+import {Category, CategoryCriteria, FilterOption, SortOption} from '../../shared/domain';
 import {ExpenseService} from "../expense.service";
 import { ToastService } from '../../shared/service/toast.service';
 import {FormBuilder, FormGroup} from "@angular/forms";
@@ -16,16 +16,19 @@ import{addMonths,set}from'date-fns';
 export class ExpenseListComponent implements OnInit, OnDestroy {
   date = set(new Date(), { date: 1 });
   categories: Category[] | null = null;
-  readonly initialSort = 'name,asc';
+  readonly initialSort = 'createdAt,desc';
   lastPageReached = false;
   loading = false;
   searchCriteria: CategoryCriteria = { page: 0, size: 25, sort: this.initialSort };
   readonly searchForm: FormGroup;
   readonly sortOptions: SortOption[] = [
-    { label: 'Created at (newest first)', value: 'createdAt,desc' },
-    { label: 'Created at (oldest first)', value: 'createdAt,asc' },
-    { label: 'Name (A-Z)', value: 'name,asc' },
-    { label: 'Name (Z-A)', value: 'name,desc' },
+    { label: 'Date (oldest first)', value: 'createdAt,asc' },
+    { label: 'Date (newest first)', value: 'createdAt,desc' },
+  ];
+  readonly FilterOptions: FilterOption[] = [
+    { label: 'Mockup I', value: 'XXX' },
+    { label: 'Mockup II', value: 'XXX' },
+    { label: 'Mockup III', value: 'XXX' },
   ];
   private readonly unsubscribe = new Subject<void>();
 
