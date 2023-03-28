@@ -14,7 +14,7 @@ import{addMonths,set}from'date-fns';
   templateUrl: './expense-list.component.html',
 })
 export class ExpenseListComponent implements OnInit, OnDestroy {
-  date=new BehaviorSubject<Date>(set(new Date(),{date:1}));
+  date = set(new Date(), { date: 1 });
   categories: Category[] | null = null;
   readonly initialSort = 'name,asc';
   lastPageReached = false;
@@ -46,7 +46,9 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
       });
   }
 
-  addMonths=(number:number):void=>this.date.next(addMonths(this.date.value,number));
+  addMonths = (number: number): void => {
+    this.date = addMonths(this.date, number);
+  };
 
   private loadCategories(next: () => void = () => {}): void {
     if (!this.searchCriteria.name) delete this.searchCriteria.name;

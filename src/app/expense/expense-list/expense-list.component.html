@@ -1,8 +1,5 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
     <ion-title>Categories</ion-title>
     <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
   </ion-toolbar>
@@ -87,3 +84,15 @@
   </ion-refresher>
 
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-title>{{ date | date:'MMMM yyyy' }}</ion-title>
+    <ion-button slot="start" shape="round" color="dark" fill="clear">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <ion-button slot="end" shape="round" color="dark" fill="clear">
+     <ion-icon name="arrow-forward-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>
