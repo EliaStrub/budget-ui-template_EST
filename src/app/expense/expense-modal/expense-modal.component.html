@@ -32,9 +32,31 @@
     <ion-input maxlength="40" placeholder="Enter the expense's name" required formControlName="name"
                [disabled]="submitting"></ion-input>
   </ion-item>
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="delete()" color="danger">
-      <ion-icon name="trash"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+
+  <ion-item>
+    <ion-icon name="pricetag" slot="start"></ion-icon>
+    <ion-select multiple="true" placeholder="Choose a category" interface="popover" formControlName="sort">
+      <ion-select-option *ngFor="let FilterOption of FilterOptions" >
+        {{FilterOption.label}}
+      </ion-select-option>
+    </ion-select>
+    <ion-button slot="end">
+      <ion-icon name="add"></ion-icon>
+    </ion-button>
+  </ion-item>
+
+  <ion-item>
+    <ion-icon name="cash" slot="start"></ion-icon>
+    <ion-input maxlength="40" placeholder="Enter the amount in CHF" required formControlName="name"
+               [disabled]="submitting"></ion-input>
+    <ion-badge color=black slot="end">CHF</ion-badge>
+  </ion-item>
+
+  <ion-item>
+    <ion-icon name="calendar" slot="start"></ion-icon>
+    <ion-datetime-button datetime="date" required class="ion-color-primary md hydrated" color="primary">
+      <button class="ion-activatable" id="date-button" aria-expanded="false" part="native"></button>
+      <slot name="date-target"></slot>
+    </ion-datetime-button>
+  </ion-item>
 </ion-content>

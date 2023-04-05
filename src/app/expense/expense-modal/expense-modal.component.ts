@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import {filter, from} from 'rxjs';
 import { ActionSheetService } from '../../shared/service/action-sheet.service';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Category, Expense} from "../../shared/domain";
+import {Category, Expense, FilterOption} from "../../shared/domain";
 import {ExpenseService} from "../expense.service";
 import {ToastService} from "../../shared/service/toast.service";
 import {CategoryService} from "../../category/category.service";
@@ -16,6 +16,12 @@ export class ExpenseModalComponent {
   expense: Expense = {} as Expense;
   readonly expenseForm: FormGroup;
   submitting = false;
+
+  readonly FilterOptions: FilterOption[] = [
+    { label: 'Mockup I', value: 'XXX' },
+    { label: 'Mockup II', value: 'XXX' },
+    { label: 'Mockup III', value: 'XXX' },
+  ];
 
   constructor(
     private readonly actionSheetService: ActionSheetService,
