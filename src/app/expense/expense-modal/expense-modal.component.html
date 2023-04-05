@@ -11,10 +11,10 @@
       </ion-button>
     </ion-buttons>
 
-    <ion-title>Add category</ion-title>
+    <ion-title>Add Expense</ion-title>
 
     <ion-buttons slot="end">
-      <ion-button (click)="save()" [disabled]="categoryForm.pristine || categoryForm.invalid || submitting">
+      <ion-button (click)="save()" [disabled]="expenseForm.pristine || expenseForm.invalid || submitting">
         <ion-icon slot="start" name="save"></ion-icon>
         Save
       </ion-button>
@@ -26,10 +26,10 @@
 <!-- ------- -->
 <!-- Content -->
 <!-- ------- -->
-<ion-content class="ion-padding" [formGroup]="categoryForm">
+<ion-content class="ion-padding" [formGroup]="expenseForm">
   <ion-item>
     <ion-icon name="text" slot="start"></ion-icon>
-    <ion-input maxlength="40" placeholder="Enter the category's name" required formControlName="name"
+    <ion-input maxlength="40" placeholder="Enter the expense's name" required formControlName="name"
                [disabled]="submitting"></ion-input>
   </ion-item>
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">

@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import {filter, from} from 'rxjs';
 import { ActionSheetService } from '../../shared/service/action-sheet.service';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Category} from "../../shared/domain";
+import {Category, Expense} from "../../shared/domain";
 import {ExpenseService} from "../expense.service";
 import {ToastService} from "../../shared/service/toast.service";
 import {CategoryService} from "../../category/category.service";
@@ -13,32 +13,32 @@ import {CategoryService} from "../../category/category.service";
   templateUrl: './expense-modal.component.html'
 })
 export class ExpenseModalComponent {
-  category: Category = {} as Category;
-  readonly categoryForm: FormGroup;
+  expense: Expense = {} as Expense;
+  readonly expenseForm: FormGroup;
   submitting = false;
 
   constructor(
     private readonly actionSheetService: ActionSheetService,
-    private readonly categoryService: CategoryService,
+    private readonly expenseService: ExpenseService,
     private readonly formBuilder: FormBuilder,
     private readonly modalCtrl: ModalController,
     private readonly toastService: ToastService
   ) {
-    this.categoryForm = this.formBuilder.group({
+    this.expenseForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.maxLength(40)]],
     });
   }
 
   save(): void {
     this.submitting = true;
-    this.categoryService.upsertCategory(this.categoryForm.value).subscribe({
+    this.expenseService.upsertExpense(this.expenseForm.value).subscribe({
       next: () => {
-        this.toastService.displaySuccessToast('Category saved');
+        this.toastService.displaySuccessToast('Expense saved');
         this.modalCtrl.dismiss(null, 'refresh');
         this.submitting = false;
       },
       error: (error) => {
-        this.toastService.displayErrorToast('Could not save category', error);
+        this.toastService.displayErrorToast('Could not save expense', error);
         this.submitting = false;
       },
     });
@@ -48,7 +48,7 @@ export class ExpenseModalComponent {
   };
 
   delete(): void {
-    from(this.actionSheetService.showDeletionConfirmation('Are you sure you want to delete this category?'))
+    from(this.actionSheetService.showDeletionConfirmation('Are you sure you want to delete this expense?'))
       .pipe(filter((action) => action === 'delete'))
       .subscribe({
         next: () => {
