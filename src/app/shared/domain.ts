@@ -9,7 +9,7 @@ export interface Expense {
   lastModifiedAt?: Date;
   // editable
   amount: number;
-  category: Category;
+  expense: Expense;
   date: Date;
   name: string;
 }
@@ -18,6 +18,9 @@ export interface Category {
   id?: string;
   name: string;
 }
+
+export interface ExpenseCriteria extends PagingCriteria {
+  name?: string;}
 
 // ------
 // Paging

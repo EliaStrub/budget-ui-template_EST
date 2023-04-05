@@ -52,7 +52,7 @@
   </ion-fab>
 
   <!-- Expense list -->
-  <ion-list [ngSwitch]="categories?.length" inset="true">
+  <ion-list [ngSwitch]="expenses?.length" inset="true">
 
     <!-- Skeleton -->
     <ng-container *ngSwitchCase="null">
@@ -67,16 +67,16 @@
     <ion-item *ngSwitchCase="0">
       <ion-icon slot="start" name="alert-circle-outline"></ion-icon>
       <ion-label>
-        No categories found
+        No expenses found
       </ion-label>
     </ion-item>
 
-    <!-- Categories -->
+    <!-- Expenses -->
     <ng-container *ngSwitchDefault>
-      <ion-item button="true" *ngFor="let category of categories" [detail]="true" [disabled]="loading"
-                (click)="openModal(category)">
+      <ion-item button="true" *ngFor="let expense of expenses" [detail]="true" [disabled]="loading"
+                (click)="openModal(expense)">
         <ion-label>
-          {{category.name}}
+          {{expense.name}}
         </ion-label>
       </ion-item>
     </ng-container>
@@ -84,12 +84,12 @@
   </ion-list>
 
   <!-- Infinite scroll -->
-  <ion-infinite-scroll [disabled]="lastPageReached || loading" (ionInfinite)="loadNextCategoryPage($event)">
+  <ion-infinite-scroll [disabled]="lastPageReached || loading" (ionInfinite)="loadNextExpensesPage($event)">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
 
   <!-- Refresher -->
-  <ion-refresher slot="fixed" (ionRefresh)="reloadCategories($event)" [disabled]="loading">
+  <ion-refresher slot="fixed" (ionRefresh)="reloadExpenses($event)" [disabled]="loading">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 

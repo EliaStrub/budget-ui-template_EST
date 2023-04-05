@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, debounce, from, interval, mergeMap, Subject, takeUntil} from 'rxjs';
 import { ExpenseModalComponent } from '../expense-modal/expense-modal.component';
 import {InfiniteScrollCustomEvent, ModalController, RefresherCustomEvent} from '@ionic/angular';
-import {Category, CategoryCriteria, FilterOption, SortOption} from '../../shared/domain';
+import {Category, CategoryCriteria, Expense, FilterOption, SortOption} from '../../shared/domain';
 import {ExpenseService} from "../expense.service";
 import { ToastService } from '../../shared/service/toast.service';
 import {FormBuilder, FormGroup} from "@angular/forms";
@@ -15,7 +15,7 @@ import{addMonths,set}from'date-fns';
 })
 export class ExpenseListComponent implements OnInit, OnDestroy {
   date = set(new Date(), { date: 1 });
-  categories: Category[] | null = null;
+  expenses: Expense[] | null = null;
   readonly initialSort = 'createdAt,desc';
   lastPageReached = false;
   loading = false;
@@ -34,7 +34,7 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly modalCtrl: ModalController,
-    private readonly categoryService: CategoryService,
+    private readonly expenseService: ExpenseService,
     private readonly toastService: ToastService,
     private readonly formBuilder: FormBuilder
   ) {this.searchForm = this.formBuilder.group({ name: [], sort: [this.initialSort] });
@@ -45,7 +45,7 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
       )
       .subscribe((value) => {
         this.searchCriteria = { ...this.searchCriteria, ...value, page: 0 };
-        this.loadCategories();
+        this.loadExpenses();
       });
   }
 
@@ -53,25 +53,25 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
     this.date = addMonths(this.date, number);
   };
 
-  private loadCategories(next: () => void = () => {}): void {
+  private loadExpenses(next: () => void = () => {}): void {
     if (!this.searchCriteria.name) delete this.searchCriteria.name;
     this.loading = true;
-    this.categoryService.getCategories(this.searchCriteria).subscribe({
-      next: (categories) => {
-        if (this.searchCriteria.page === 0 || !this.categories) this.categories = [];
-        this.categories.push(...categories.content);
-        this.lastPageReached = categories.last;
+    this.expenseService.getExpenses(this.searchCriteria).subscribe({
+      next: (expenses) => {
+        if (this.searchCriteria.page === 0 || !this.expenses) this.expenses = [];
+        this.expenses.push(...expenses.content);
+        this.lastPageReached = expenses.last;
         next();
         this.loading = false;
       },
       error: (error) => {
-        this.toastService.displayErrorToast('Could not load categories', error);
+        this.toastService.displayErrorToast('Could not load expenses', error);
         this.loading = false;
       },
     });
   }
   ngOnInit(): void {
-    this.loadCategories();
+    this.loadExpenses();
   }
 
   ngOnDestroy(): void {
@@ -82,20 +82,20 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
   async openModal(category?: Category): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: ExpenseModalComponent,
-      componentProps: { category: category ? { ...category } : {} },
+      componentProps: { expense: this.expenses ? { ...category } : {} },
     });
     modal.present();
     const { role } = await modal.onWillDismiss();
-    if (role === 'refresh') this.reloadCategories();
+    if (role === 'refresh') this.reloadExpenses();
   }
-  loadNextCategoryPage($event: any) {
+  loadNextExpensesPage($event: any) {
     this.searchCriteria.page++;
-    this.loadCategories(() => ($event as InfiniteScrollCustomEvent).target.complete());
+    this.loadExpenses(() => ($event as InfiniteScrollCustomEvent).target.complete());
   }
 
-  reloadCategories($event?: any): void {
+  reloadExpenses($event?: any): void {
     this.searchCriteria.page = 0;
-    this.loadCategories(() => ($event ? ($event as RefresherCustomEvent).target.complete() : {}));
+    this.loadExpenses(() => ($event ? ($event as RefresherCustomEvent).target.complete() : {}));
   }
 
 }

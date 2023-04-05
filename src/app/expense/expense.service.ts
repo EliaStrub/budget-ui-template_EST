@@ -12,7 +12,7 @@ export class ExpenseService {
 
   // Read
 
-  getCategories = (pagingCriteria: PagingCriteria): Observable<Page<Expense>> =>
+  getExpenses = (pagingCriteria: PagingCriteria): Observable<Page<Expense>> =>
     this.httpClient.get<Page<Expense>>(this.apiUrl, { params: new HttpParams({ fromObject: { ...pagingCriteria } }) });
 
   // Create & Update
